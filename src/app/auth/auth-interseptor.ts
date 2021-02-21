@@ -1,29 +1,23 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, throwError, timer} from 'rxjs';
 import {AuthService} from './auth.service';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError, mergeMap, retryWhen, switchMap, tap} from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private auth: AuthService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    req = this.addAuthHeader(req);
-    return next.handle(req)
-      .pipe(
-        // @ts-ignore
-        catchError(err => {
-          if (err.status === 401) {
-            this.auth.refreshTokens()
-              .pipe(
-                tap(
-                  request => next.handle(this.addAuthHeader(req)),
-                  error => this.auth.logout()
-                )
-              );
-          }
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // @ts-ignore
+    return next.handle(this.addAuthHeader(request)).pipe(catchError(error => {
+        if (error.status === 401) {
+          return this.auth.refreshTokens().pipe(
+            switchMap(() => next.handle(this.addAuthHeader(request)))
+          );
+        }
+        return throwError(error);
       })
     );
   }

@@ -5,7 +5,7 @@ import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
 import {RedirectDto} from './redirect.dto';
 import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,7 @@ export class AuthService {
 
   public logout(): void {
     this.clearTokens();
+    this.redirectToLogin();
   }
 
   public refreshTokens(): Observable<TokenDto> {
@@ -32,19 +33,33 @@ export class AuthService {
       return this.http.post<TokenDto>(environment.apiUrl + '/api/v1/auth/refresh', {refreshToken})
         .pipe(
           tap(
-            tokens => this.updateTokens(tokens),
-            error => this.redirectToLogin()
-          )
+            tokens => this.updateTokens(tokens)
+          ),
+          // @ts-ignore
+          catchError(err => this.redirectToLogin())
         );
     } else {
       this.redirectToLogin();
     }
   }
 
+  public exchangeCodeForAuthAndRedirect(code: string): void {
+    let httpParams: HttpParams = new HttpParams();
+    httpParams = httpParams.append('code', code);
+    httpParams = httpParams.append('redirectUrl', environment.baseUrl + '/oauth');
+    this.http.get<TokenDto>(environment.apiUrl + '/api/v1/auth/code', {params: httpParams})
+      .subscribe(
+        tokens => {
+                          this.updateTokens(tokens);
+                          this.router.navigateByUrl('/home');
+                        },
+      error => this.redirectToLogin());
+  }
+
   private redirectToLogin(): void {
     this.clearTokens();
-    const httpParams = new HttpParams();
-    httpParams.append('redirectUrl', environment.baseUrl + '/oauth');
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append('redirectUrl', environment.baseUrl + '/oauth');
     this.http.get<RedirectDto>(environment.apiUrl + '/api/v1/auth/redirectUrl', {params: httpParams})
       .subscribe(
         get => location.href = get.redirectUrl,
