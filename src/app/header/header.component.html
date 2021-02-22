@@ -1,2 +1,4 @@
-<h3 *ngIf="currentUser">Hi {{currentUser.email}}</h3>
-<button (click)="logout()">Logout!</button>
+<header>
+  <h3 *ngIf="currentUser">Hi, {{currentUser.email}}!</h3>
+  <button (click)="logout()">Logout!</button>
+</header>
