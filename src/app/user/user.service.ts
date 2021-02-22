@@ -12,6 +12,6 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   public getCurrentUser(): Observable<UserDto> {
-    return this.http.get<UserDto>(environment.apiUrl + '/api/v1/users/current');
+    return this.http.get<UserDto>(environment.url + '/api/v1/users/current');
   }
 }

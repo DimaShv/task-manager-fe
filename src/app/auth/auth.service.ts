@@ -30,7 +30,7 @@ export class AuthService {
   public refreshTokens(): Observable<TokenDto> {
     const refreshToken = this.getRefreshToken();
     if (refreshToken) {
-      return this.http.post<TokenDto>(environment.apiUrl + '/api/v1/auth/refresh', {refreshToken})
+      return this.http.post<TokenDto>(environment.url + '/api/v1/auth/refresh', {refreshToken})
         .pipe(
           tap(
             tokens => this.updateTokens(tokens)
@@ -46,8 +46,8 @@ export class AuthService {
   public exchangeCodeForAuthAndRedirect(code: string): void {
     let httpParams: HttpParams = new HttpParams();
     httpParams = httpParams.append('code', code);
-    httpParams = httpParams.append('redirectUrl', environment.baseUrl + '/oauth');
-    this.http.get<TokenDto>(environment.apiUrl + '/api/v1/auth/code', {params: httpParams})
+    httpParams = httpParams.append('redirectUrl', environment.url + '/oauth');
+    this.http.get<TokenDto>(environment.url + '/api/v1/auth/code', {params: httpParams})
       .subscribe(
         tokens => {
                           this.updateTokens(tokens);
@@ -59,8 +59,8 @@ export class AuthService {
   private redirectToLogin(): void {
     this.clearTokens();
     let httpParams = new HttpParams();
-    httpParams = httpParams.append('redirectUrl', environment.baseUrl + '/oauth');
-    this.http.get<RedirectDto>(environment.apiUrl + '/api/v1/auth/redirectUrl', {params: httpParams})
+    httpParams = httpParams.append('redirectUrl', environment.url + '/oauth');
+    this.http.get<RedirectDto>(environment.url + '/api/v1/auth/redirectUrl', {params: httpParams})
       .subscribe(
         get => location.href = get.redirectUrl,
         error => console.error('implement error for login redirect') // todo: implement fail login
