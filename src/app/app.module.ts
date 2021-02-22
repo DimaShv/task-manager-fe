@@ -8,6 +8,8 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { AuthCodeComponent } from './auth/auth-code/auth-code.component';
 import { HeaderComponent } from './header/header.component';
 import {AuthInterceptor} from './auth/auth-interseptor';
+import { TaskListComponent } from './task/task-list/task-list.component';
+import { TaskComponent } from './task/task-list/task/task.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +17,8 @@ import {AuthInterceptor} from './auth/auth-interseptor';
     HomeComponent,
     AuthCodeComponent,
     HeaderComponent,
+    TaskListComponent,
+    TaskComponent,
   ],
   imports: [
     BrowserModule,
