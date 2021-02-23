@@ -1,0 +1,7 @@
+.gitignore
+
+/.git
+/tslint-rules
+/node-modules
+
+*.md

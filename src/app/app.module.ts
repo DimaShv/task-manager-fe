@@ -9,7 +9,8 @@ import { AuthCodeComponent } from './auth/auth-code/auth-code.component';
 import { HeaderComponent } from './header/header.component';
 import {AuthInterceptor} from './auth/auth-interseptor';
 import { TaskListComponent } from './task/task-list/task-list.component';
-import { TaskComponent } from './task/task-list/task/task.component';
+import { TaskCardComponent } from './task/task-list/task-card/task-card.component';
+import {CommonModule} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -18,9 +19,10 @@ import { TaskComponent } from './task/task-list/task/task.component';
     AuthCodeComponent,
     HeaderComponent,
     TaskListComponent,
-    TaskComponent,
+    TaskCardComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule
